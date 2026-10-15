@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        canvas {
+            background-color: black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="800" height="800"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        let i = 0;
+        const totalSteps = 320;
+
+        function animate() {
+            if (i >= totalSteps) return;
+
+            let a = (2 * Math.PI * i) / 320;
+            let xo = 16 * (Math.sin(a) ** 3) * 16;
+            let yo = -(13 * Math.cos(a) - 5 * Math.cos(2 * a) - 2 * Math.cos(3 * a) - Math.cos(4 * a)) * 16;
+            
+            // Random length factor matching uniform(0.15, 0.5)
+            let L = 0.15 + Math.random() * (0.5 - 0.15);
+            let xi = xo * (1 - L);
+            let yi = yo * (1 - L);
+
+            let cx = canvas.width / 2;
+            let cy = canvas.height / 2;
+
+            for (let j = 0; j < 10; j++) {
+                let f = j / 10;
+                let r = Math.round((1 - 0.6 * f) * 255);
+                let g = Math.round(0.7 * (1 - f) * 255);
+                let b = Math.round(0.8 * (1 - f) * 255);
+
+                ctx.strokeStyle = `rgb(${r}, ${g}, ${b})`;
+                ctx.lineWidth = 2;
+
+                let startX = cx + xo + (xi - xo) * f;
+                let startY = cy + yo + (yi - yo) * f;
+                let endX = cx + xo + (xi - xo) * (f + 0.1);
+                let endY = cy + yo + (yi - yo) * (f + 0.1);
+
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(endX, endY);
+                ctx.stroke();
+            }
+
+            i++;
+            setTimeout(() => {
+                requestAnimationFrame(animate);
+            }, 20); // time.sleep(0.02) equivalent to ~20ms
+        }
+
+        requestAnimationFrame(animate);
+    </script>
+</body>
+</html>
